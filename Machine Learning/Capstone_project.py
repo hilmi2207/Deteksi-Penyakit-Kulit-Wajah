@@ -33,13 +33,13 @@ files.upload()
 
 import os
 import glob
-train_path = "/content/dataset/Dataset/train/"
+train_path = "/content/dataset/train/"
 print("Jumlah data training: \n")
 for folder in os.listdir(train_path):
         files = glob.glob(pathname = train_path + folder + '/*.jpg')
         print(f'{folder} : {len(files)}')
 
-train_path = "/content/dataset/Dataset/validation/"
+train_path = "/content/dataset/validation/"
 print("Jumlah data validation: \n")
 for folder in os.listdir(train_path):
         files = glob.glob(pathname = train_path + folder + '/*.jpg')
@@ -78,8 +78,8 @@ for n , i in enumerate(list(np.random.randint(0,len(X_train),25))) :
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 import os
 
-train_dir = os.path.join('/content/dataset/Dataset/train/')
-val_dir = os.path.join('/content/dataset/Dataset/validation')
+train_dir = os.path.join('/content/dataset/train/')
+val_dir = os.path.join('/content/dataset/validation')
 
 train_datagen = ImageDataGenerator(rescale=1./225,
                                    rotation_range = 20,
@@ -160,10 +160,8 @@ model.save('saved_model/my_model.h5')
 """### Training Result Chart"""
 
 import matplotlib.pyplot as plt
-
 acc = history.history['accuracy']
 val_acc = history.history['val_accuracy']
-
 
 loss = history.history['loss']
 val_loss = history.history['val_loss']
@@ -182,11 +180,14 @@ plt.title('Training and validation loss')
 
 """## Model Testing"""
 
+# Commented out IPython magic to ensure Python compatibility.
 import numpy as np
 import tensorflow as tf
 from google.colab import files
 from keras.preprocessing import image
 import matplotlib.pyplot as plt
+# %matplotlib inline
+from google.colab.patches import cv2_imshow
 import cv2
 from PIL import Image 
 
