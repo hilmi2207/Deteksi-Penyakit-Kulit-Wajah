@@ -29,6 +29,50 @@ files.upload()
 
 !unzip face-disease.zip -d dataset
 
+"""## Data Understanding"""
+
+import os
+import glob
+train_path = "/content/dataset/Dataset/train/"
+print("Jumlah data training: \n")
+for folder in os.listdir(train_path):
+        files = glob.glob(pathname = train_path + folder + '/*.jpg')
+        print(f'{folder} : {len(files)}')
+
+train_path = "/content/dataset/Dataset/validation/"
+print("Jumlah data validation: \n")
+for folder in os.listdir(train_path):
+        files = glob.glob(pathname = train_path + folder + '/*.jpg')
+        print(f'{folder} : {len(files)}')
+
+import cv2
+X_train = []
+y_train = []
+img_size = 100
+
+code = {'blackhead':0, 'eksim':1, 'flek hitam':2, 'herpes':3, 'jerawat':4, 'milia':5, 'panu':6, 'rosacea':7, 'tineafasialis':8}
+for folder in os.listdir(train_path):
+    files = glob.glob(pathname = train_path + folder + "/*.jpg")
+    for file in files:
+        img = cv2.imread(file)
+        img_array = cv2.resize(img , (img_size,img_size))
+        X_train.append(list(img_array))
+        y_train.append(code[folder])
+def getcode(n) : 
+    for x , y in code.items() : 
+        if n == y : 
+            return x
+
+from matplotlib import pyplot as plt
+import numpy as np
+
+plt.figure(figsize=(15,15))
+for n , i in enumerate(list(np.random.randint(0,len(X_train),25))) : 
+    plt.subplot(5,5,n+1)
+    plt.imshow(X_train[i])   
+    plt.axis('off')
+    plt.title(getcode(y_train[i]))
+
 """## Image Augmentation"""
 
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
@@ -90,6 +134,14 @@ model = tf.keras.models.Sequential([
     tf.keras.layers.Dense(9, activation='softmax')
 ])
 
+tf.keras.utils.plot_model(
+    model,
+    to_file="model.png",
+    show_shapes=False,
+    show_layer_names=True,
+    rankdir="TB",
+    expand_nested=False)
+
 model.summary()
 
 """### Compile and Training"""
@@ -145,22 +197,33 @@ import tensorflow as tf
 from google.colab import files
 from keras.preprocessing import image
 import matplotlib.pyplot as plt
-import matplotlib.image as mpimg
 # %matplotlib inline
-from PIL import Image
+from google.colab.patches import cv2_imshow
+import cv2
+from PIL import Image 
 
-new_model = tf.keras.models.load_model('./saved_model/my_model.h5')
+
+new_model = tf.keras.models.load_model('/content/my_model.h5')
 labels = ['blackhead', 'eksim', 'flek hitam', 'herpes', 'jerawat', 'milia', 'panu', 'rosacea', 'tinea fasialis']
-input_size = (160,160)
+
 def preprocess(img,input_size):
     nimg = img.convert('RGB').resize(input_size, resample= 0)
     img_arr = (np.array(nimg))/255
     return img_arr
 def reshape(imgs_arr):
     return np.stack(imgs_arr, axis=0)
-im = Image.open('/content/07AcnePittedScars.jpg')
-X = preprocess(im,input_size)
-X = reshape([X])
-y = new_model.predict(X)
+from google.colab import files
 
-print( labels[np.argmax(y)], np.max(y) )
+im = files.upload()
+for fn in im.keys():
+  input_size = (160,160)
+  path = fn 
+  img = image.load_img(path, input_size)
+  X = preprocess(img,input_size)
+  X = reshape([X])
+  y = new_model.predict(X)
+  akurasi = np.max(y)*100
+  im = Image.open(fn)
+  pyplot.imshow(im)
+  print( labels[np.argmax(y)], akurasi)
+
