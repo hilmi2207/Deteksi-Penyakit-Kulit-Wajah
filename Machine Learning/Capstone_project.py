@@ -111,7 +111,6 @@ import tensorflow as tf
 image_size = 160
 IMG_SHAPE = (image_size, image_size, 3)
 
-#Create the base model from the pre-trained model MobileNet V2
 base_model = tf.keras.applications.MobileNetV2(input_shape=IMG_SHAPE,
                                               include_top=False,
                                               weights='imagenet')
@@ -120,13 +119,10 @@ base_model.trainable = False
 """### Sequential Model"""
 
 model = tf.keras.models.Sequential([
-    # Note the input shape is the desired size of the image 300x300 with 3 bytes color
-    # This is the first convolution
     base_model,
     tf.keras.layers.Conv2D(16, (3,3), activation='relu'),
     tf.keras.layers.MaxPooling2D(2, 2),
     
-    # Flatten the results to feed into a DNN
     tf.keras.layers.Flatten(),
     
     tf.keras.layers.Dense(512, activation='relu'),
@@ -164,41 +160,33 @@ model.save('saved_model/my_model.h5')
 """### Training Result Chart"""
 
 import matplotlib.pyplot as plt
-# Retrieve a list of accuracy results on training and validation data
-# sets for each training epoch
+
 acc = history.history['accuracy']
 val_acc = history.history['val_accuracy']
 
-# Retrieve a list of list results on training and validation data
-# sets for each training epoch
+
 loss = history.history['loss']
 val_loss = history.history['val_loss']
 
-# Get number of epochs
 epochs = range(len(acc))
 
-# Plot training and validation accuracy per epoch
 plt.plot(epochs, acc)
 plt.plot(epochs, val_acc)
 plt.title('Training and validation accuracy')
 
 plt.figure()
 
-# Plot training and validation loss per epoch
 plt.plot(epochs, loss)
 plt.plot(epochs, val_loss)
 plt.title('Training and validation loss')
 
 """## Model Testing"""
 
-# Commented out IPython magic to ensure Python compatibility.
 import numpy as np
 import tensorflow as tf
 from google.colab import files
 from keras.preprocessing import image
 import matplotlib.pyplot as plt
-# %matplotlib inline
-from google.colab.patches import cv2_imshow
 import cv2
 from PIL import Image 
 
@@ -226,4 +214,3 @@ for fn in im.keys():
   im = Image.open(fn)
   pyplot.imshow(im)
   print( labels[np.argmax(y)], akurasi)
-
