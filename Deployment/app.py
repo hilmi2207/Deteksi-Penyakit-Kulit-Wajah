@@ -1,10 +1,7 @@
 from flask import Flask, render_template, request
 from keras.models import load_model
-import os
 import numpy as np
-import pandas as pd
 from PIL import Image
-from keras.preprocessing import image
 import json
 
 app = Flask(__name__)
