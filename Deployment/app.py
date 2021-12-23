@@ -1,8 +1,8 @@
 from flask import Flask, render_template, request
 from keras.models import load_model
 import numpy as np
-from PIL import Image
-import json
+from PIL import Image 
+import json 
 
 app = Flask(__name__)
 
